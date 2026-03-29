@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: fluxtrade-backend
+    runtime: python
+    region: frankfurt
+    plan: free
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: python server.py
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11"
