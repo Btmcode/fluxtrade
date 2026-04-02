@@ -272,10 +272,28 @@ body {
 /* ─── Main Content ─── */
 .main-content {
   flex: 1;
-  padding: 24px 32px 32px;
+  padding: 24px 32px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  overflow-y: auto;
+  position: relative;
+}
+
+.dashboard-primary {
+  flex: 1;
   display: flex;
   flex-direction: column;
   gap: 24px;
+}
+
+.dashboard-radar-strip {
+  width: 100%;
+  position: sticky;
+  bottom: 0;
+  z-index: 100;
+  padding-bottom: 20px;
+  margin-top: auto;
 }
 
 /* ─── Stats Bento Grid ─── */
@@ -364,10 +382,19 @@ body {
 }
 
 /* ─── Symbol Grid (Premium Redesign) ─── */
+.sort-toggle { border-color: rgba(56, 189, 248, 0.3); color: #38bdf8; font-size: 0.8rem; }
+.sort-toggle.active { background: rgba(56, 189, 248, 0.15); border-color: #38bdf8; box-shadow: 0 0 15px rgba(56,189,248,0.2); }
+
 .symbol-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
   gap: 20px;
+  position: relative;
+}
+
+.symbol-card-premium {
+  /* ... existing styles ... */
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s;
 }
 
 .symbol-card-premium {
@@ -578,12 +605,23 @@ body {
   transition: stroke-dashoffset var(--transition-slow), stroke var(--transition-med);
 }
 
-.radial-text {
+.radial-svg-text {
   font-family: var(--font-mono);
-  font-size: 0.8rem;
+  font-size: 11px;
+  font-weight: 800;
+  pointer-events: none;
+  filter: drop-shadow(0 0 2px rgba(0,0,0,0.5));
+}
+
+.build-ver-tag {
+  font-size: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 2px 8px;
+  border-radius: 4px;
+  color: var(--text-tertiary);
   font-weight: 700;
-  z-index: 2;
-  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+  margin-left: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 /* Mini Volume Chart */
@@ -1017,4 +1055,150 @@ body {
 @keyframes pillGlow {
   0% { box-shadow: 0 0 4px rgba(52, 211, 153, 0.3); }
   100% { box-shadow: 0 0 8px rgba(52, 211, 153, 0.6); }
+}
+
+/* --- MODERN UI (PHASE 12.1) --- */
+
+/* Grid Overwrite for High Density */
+.symbol-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important;
+  gap: 16px !important;
+  padding: 10px !important;
+}
+
+/* Compact Card Styles */
+.symbol-card-premium.compact {
+  padding: 16px !important;
+  border-radius: 16px !important;
+  background: rgba(15, 23, 42, 0.6) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  gap: 12px !important;
+}
+
+.symbol-header-flex.compact {
+  margin-bottom: 8px !important;
+}
+
+.symbol-logo-chip.small {
+  width: 32px !important;
+  height: 32px !important;
+  font-size: 0.8rem !important;
+  border-radius: 8px !important;
+}
+
+.symbol-name-display.compact {
+  font-size: 0.95rem !important;
+  font-weight: 600 !important;
+}
+
+.symbol-ticker.small {
+  font-size: 0.65rem !important;
+}
+
+.symbol-current-price.compact {
+  font-size: 1.1rem !important;
+}
+
+/* Slim Pressure Bar */
+.pressure-container.compact {
+  margin: 8px 0 !important;
+  gap: 6px !important;
+}
+
+.liquid-bar-track.slim {
+  height: 4px !important;
+}
+
+.pressure-labels-bottom {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 4px;
+  font-size: 0.6rem;
+  font-family: var(--font-mono);
+  opacity: 0.5;
+}
+
+/* Compact Metrics */
+.metrics-compact-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 8px 12px;
+  border-radius: 10px;
+  margin-top: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.02);
+}
+
+.m-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.m-label {
+  font-size: 0.55rem;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.m-val {
+  font-size: 0.8rem;
+  font-weight: 700;
+  font-family: var(--font-mono);
+}
+
+.m-val.pos { color: #10b981; }
+.m-val.neg { color: #ef4444; }
+
+.gauge-mini {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gauge-mini .m-val {
+  position: absolute;
+  font-size: 0.6rem;
+  font-weight: 800;
+}
+
+/* Modern Pill Buttons */
+.premium-glass-btn {
+  background: rgba(20, 20, 25, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 6px 16px;
+  border-radius: 100px; /* Pill Shape */
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #f8fafc;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  backdrop-filter: blur(12px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.premium-glass-btn:hover {
+  background: rgba(30, 30, 35, 0.8);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(56, 189, 248, 0.1);
+}
+
+.premium-glass-btn.active {
+  background: rgba(56, 189, 248, 0.12);
+  border-color: #38bdf8;
+  color: #38bdf8;
+  box-shadow: 0 0 15px rgba(56, 189, 248, 0.15);
+}
+
+.mini-volume-chart.slim {
+  height: 20px;
+  margin-top: 10px;
+  gap: 2px;
 }

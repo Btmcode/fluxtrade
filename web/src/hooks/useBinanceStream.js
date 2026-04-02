@@ -27,6 +27,7 @@ export function useBinanceStream() {
     okx: 'connecting',
   });
   const [messagesPerSecond, setMessagesPerSecond] = useState(0);
+  const [whaleTrades, setWhaleTrades] = useState([]);
 
   // Backtest State
   const [isBacktesting, setIsBacktesting] = useState(false);
@@ -64,6 +65,14 @@ export function useBinanceStream() {
         (trade) => {
           engine.recordTrade(trade);
           msgCountRef.current++;
+          
+          const usdVol = trade.p * trade.q;
+          if (usdVol >= 150000) {
+            setWhaleTrades(prev => {
+              const newFeed = [{...trade, usdVol, id: Math.random().toString(36).substr(2,9)}, ...prev];
+              return newFeed.slice(0, 50); // keep last 50
+            });
+          }
         },
         (depthData) => {
           if (depthData?.s && depthData?.obi !== undefined) {
@@ -152,5 +161,6 @@ export function useBinanceStream() {
     startBacktest,
     stopBacktest,
     isBacktesting,
+    whaleTrades,
   };
 }

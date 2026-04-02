@@ -6,10 +6,10 @@
  */
 'use client';
 
-import { formatUsd, formatPrice, getSymbolMeta } from '@/lib/utils';
+import { formatUsd, formatPrice, formatNumber, getSymbolMeta } from '@/lib/utils';
 import { useMemo } from 'react';
 
-export default function SymbolCard({ data }) {
+export default function SymbolCard({ data, onClick }) {
   const meta = getSymbolMeta(data.symbol);
 
   const signalClass = data.signal || 'signal-neutral';
@@ -31,35 +31,33 @@ export default function SymbolCard({ data }) {
   );
 
   return (
-    <div className="stat-card symbol-card-premium" id={`card-${data.symbol}`}>
-      {/* Header Area */}
-      <div className="symbol-header-flex">
+    <div 
+      className="stat-card symbol-card-premium compact" 
+      id={`card-${data.symbol}`}
+      onClick={() => onClick && onClick(data.symbol)}
+      style={{ cursor: 'pointer' }}
+    >
+      {/* Compact Header */}
+      <div className="symbol-header-flex compact">
         <div className="symbol-id-group">
-          <div className={`symbol-logo-chip ${meta.icon}`}>
+          <div className={`symbol-logo-chip small ${meta.icon}`}>
             {meta.short}
           </div>
           <div className="symbol-titles">
-            <h2 className="symbol-name-display">{meta.name}</h2>
-            <div className="symbol-ticker">{data.symbol}</div>
+            <h2 className="symbol-name-display compact">{meta.name}</h2>
+            <div className="symbol-ticker small">{data.symbol}</div>
           </div>
         </div>
-        <div className="symbol-price-group">
-          <div className="symbol-current-price">
+        <div className="symbol-price-group compact">
+          <div className="symbol-current-price compact">
             {data.lastPrice > 0 ? formatPrice(data.lastPrice) : '—'}
-          </div>
-          <div className="symbol-trade-count">
-            {data.totalTradeCount.toLocaleString()} vol
           </div>
         </div>
       </div>
 
-      {/* Pressure Bar Area (Animated Gradient) */}
-      <div className="pressure-container">
-        <div className="pressure-labels-top">
-          <span className="pressure-label-buy">Alış: {formatUsd(data.windowBuyVolume)}</span>
-          <span className="pressure-label-sell">Satış: {formatUsd(data.windowSellVolume)}</span>
-        </div>
-        <div className="liquid-bar-track">
+      {/* Slim Pressure Bar */}
+      <div className="pressure-container compact">
+        <div className="liquid-bar-track slim">
           <div 
             className="liquid-bar-fill"
             style={{ 
@@ -68,63 +66,51 @@ export default function SymbolCard({ data }) {
             }}
           />
         </div>
-      </div>
-
-      {/* Metrics Row Grid */}
-      <div className="metrics-bento-row">
-        <div className="metric-bento-cell">
-          <div className="cell-label">CVD (60s)</div>
-          <div className={`cell-value ${data.windowCvd >= 0 ? 'positive' : 'negative'}`}>
-            {data.windowCvd >= 0 ? '+' : ''}{formatUsd(data.windowCvd)}
-          </div>
-        </div>
-        
-        <div className="metric-bento-cell">
-          <div className="cell-label">Net Akış</div>
-          <div className={`cell-value ${data.cvdLifetime >= 0 ? 'positive' : 'negative'}`}>
-            {data.cvdLifetime >= 0 ? '+' : ''}{formatUsd(data.cvdLifetime)}
-          </div>
-        </div>
-
-        <div className="metric-bento-cell">
-          <div className="cell-label">OBI</div>
-          <div className={`cell-value ${data.obi > 0.5 ? 'positive' : data.obi < 0.5 ? 'negative' : ''}`}>
-            {(data.obi * 100).toFixed(1)}%
-          </div>
-        </div>
-
-        {/* Radial Signal Gauge */}
-        <div className="metric-bento-cell gauge-cell">
-          <div className="cell-label">Momentum</div>
-          <div className="radial-signal">
-            <svg width="40" height="40" viewBox="0 0 40 40" className="radial-svg">
-              <circle cx="20" cy="20" r="16" className="radial-bg" />
-              <circle 
-                cx="20" cy="20" r="16" 
-                className="radial-progress"
-                stroke={gaugeColor}
-                strokeDasharray={circumference}
-                strokeDashoffset={dashoffset}
-              />
-            </svg>
-            <div className="radial-text" style={{ color: gaugeColor }}>
-              {(data.buyRatio * 100).toFixed(0)}
-            </div>
-          </div>
+        <div className="pressure-labels-bottom">
+          <span className="p-val buy">{formatUsd(data.windowBuyVolume)}</span>
+          <span className="p-val sell">{formatUsd(data.windowSellVolume)}</span>
         </div>
       </div>
 
-      {/* Refined Volume Chart */}
+      {/* Compact Metrics Grid */}
+      <div className="metrics-compact-row">
+        <div className="m-cell">
+          <span className="m-label">CVD</span>
+          <span className={`m-val ${data.windowCvd >= 0 ? 'pos' : 'neg'}`}>
+            {formatNumber(data.windowCvd / 1000)}k
+          </span>
+        </div>
+        <div className="m-cell">
+          <span className="m-label">OBI</span>
+          <span className="m-val">{(data.obi * 100).toFixed(0)}%</span>
+        </div>
+        <div className="m-cell gauge-mini">
+          <svg width="28" height="28" viewBox="0 0 40 40">
+            <circle cx="20" cy="20" r="16" className="radial-bg" />
+            <circle 
+              cx="20" cy="20" r="16" 
+              className="radial-progress"
+              stroke={gaugeColor}
+              strokeDasharray={circumference}
+              strokeDashoffset={dashoffset}
+              strokeWidth="4"
+            />
+          </svg>
+          <span className="m-val" style={{ color: gaugeColor }}>{(data.buyRatio * 100).toFixed(0)}</span>
+        </div>
+      </div>
+
+      {/* Ultra Slim Vol Chart */}
       {volumeHistory.length > 2 && (
-        <div className="mini-volume-chart">
-          {volumeHistory.map((v, i) => {
+        <div className="mini-volume-chart slim">
+          {volumeHistory.slice(-15).map((v, i) => {
             const dominant = v.buy >= v.sell ? 'buy' : 'sell';
-            const height = Math.max((Math.max(v.buy, v.sell) / maxVol) * 100, 4);
+            const height = Math.max((Math.max(v.buy, v.sell) / maxVol) * 100, 10);
             return (
               <div
                 key={i}
                 className={`mini-vol-bar ${dominant === 'buy' ? 'vol-buy' : 'vol-sell'}`}
-                style={{ height: `${height}%` }}
+                style={{ height: `${height}%`, width: '3px' }}
               />
             );
           })}
