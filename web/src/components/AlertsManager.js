@@ -114,7 +114,7 @@ export default function AlertsManager({ snapshots }) {
               <div className="panel-title">Yeni Kural Ekle</div>
               <div className="compact-rule-form">
                 <select value={newAlert.symbol} onChange={e => setNewAlert({...newAlert, symbol: e.target.value})}>
-                  <option value="BTCUSDT">BTC</option><option value="ETHUSDT">ETH</option><option value="SOLUSDT">SOL</option><option value="BNBUSDT">BNB</option><option value="XRPUSDT">XRP</option>
+                  <option value="BTCUSDT">BTC</option><option value="ETHUSDT">ETH</option><option value="SOLUSDT">SOL</option><option value="BNBUSDT">BNB</option><option value="XRPUSDT">XRP</option><option value="YFIUSDT">YFI</option><option value="AVAXUSDT">AVAX</option><option value="LINKUSDT">LINK</option>
                 </select>
                 <select value={newAlert.metric} onChange={e => setNewAlert({...newAlert, metric: e.target.value})}>
                   <option value="obi">OBI</option><option value="buyRatio">Alım %</option><option value="cvd">CVD</option>

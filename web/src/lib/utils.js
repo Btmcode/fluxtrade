@@ -26,6 +26,9 @@ export function getSymbolMeta(symbol) {
     SOLUSDT: { name: 'Solana', short: 'SOL', icon: 'sol', color: '#9945ff' },
     BNBUSDT: { name: 'BNB', short: 'BNB', icon: 'bnb', color: '#f0b90b' },
     XRPUSDT: { name: 'XRP', short: 'XRP', icon: 'xrp', color: '#ffffff' },
+    YFIUSDT: { name: 'Yearn.finance', short: 'YFI', icon: 'yfi', color: '#0066ff' },
+    AVAXUSDT: { name: 'Avalanche', short: 'AVAX', icon: 'avax', color: '#e84142' },
+    LINKUSDT: { name: 'Chainlink', short: 'LINK', icon: 'link', color: '#2a5ada' },
   };
   return map[symbol] || { name: symbol, short: symbol.slice(0, 3), icon: 'btc', color: '#38bdf8' };
 }

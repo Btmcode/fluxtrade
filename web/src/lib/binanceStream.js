@@ -16,13 +16,16 @@
 // ═══════════════════════════════════════════════════════
 // Configuration
 // ═══════════════════════════════════════════════════════
-const SYMBOLS = ['btcusdt', 'ethusdt', 'solusdt', 'bnbusdt', 'xrpusdt'];
+const SYMBOLS = ['btcusdt', 'ethusdt', 'solusdt', 'bnbusdt', 'xrpusdt', 'yfiusdt', 'avaxusdt', 'linkusdt'];
 
 const OKX_SYMBOL_MAP = {
   'BTC-USDT': 'BTCUSDT',
   'ETH-USDT': 'ETHUSDT',
   'SOL-USDT': 'SOLUSDT',
   'XRP-USDT': 'XRPUSDT',
+  'YFI-USDT': 'YFIUSDT',
+  'AVAX-USDT': 'AVAXUSDT',
+  'LINK-USDT': 'LINKUSDT',
 };
 const OKX_SYMBOLS = Object.keys(OKX_SYMBOL_MAP);
 
