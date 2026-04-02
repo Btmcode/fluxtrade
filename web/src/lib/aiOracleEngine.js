@@ -21,22 +21,34 @@ export function generateOracleAnalysis(symbol, snap) {
     thoughts.push(`Emir defterindeki alım tarafında zayıflık var (OBI %${(obi*100).toFixed(0)}), pazar satıcılara teslim olabilir.`);
   }
 
-  // CVD Logic
-  if (windowCvd > 500000) { // +$500K
+  // --- SENIOR PATTERN: Stealth Accumulation (Divergence) ---
+  if (obi > 0.60 && windowCvd < -200000) {
+    score += 10;
+    thoughts.push(`⚠️ Pozitif Uyumsuzluk Saptandı: Fiyat baskılanırken emir defteri alıcılarla doluyor. 'Stealth Accumulation' (Gizli Birikim) emaresi.`);
+  }
+
+  // --- SENIOR PATTERN: Trend Exhaustion ---
+  if (buyRatio > 0.85 && windowCvd < 100000) {
+    score -= 10;
+    thoughts.push(`🔍 Trend Yorulması: Alım hızı çok yüksek ancak net para girişi (CVD) bu hızı desteklemiyor. Sahte breakout (fake-out) riski yüksek.`);
+  }
+
+  // CVD Logic (Upgraded)
+  if (windowCvd > 500000) { 
     score += 20;
-    thoughts.push(`Son 60 saniyede net akış parabolik şekilde arttı (+$${(windowCvd/1000).toFixed(0)}K CVD). Smart Money yönünü yukarı çevirdi.`);
+    thoughts.push(`🚀 Kurumsal Alım Kanıtı: Son 60s'de +$${(windowCvd/1000).toFixed(0)}K net akış. Balinalar agresif şekilde kademeleri süpürüyor.`);
   } else if (windowCvd < -500000) {
     score -= 20;
-    thoughts.push(`Ağır market satışları tetiklendi. (Net Akış: -$${Math.abs(windowCvd/1000).toFixed(0)}K). Dağıtım (distribution) evresi olabilir.`);
+    thoughts.push(`📉 Likidite Boşalması: -$${Math.abs(windowCvd/1000).toFixed(0)}K net çıkış. Büyük oyuncular kar realizasyonu veya panik satışı yapıyor.`);
   }
 
   // Buy Ratio (Velocity) Logic
   if (buyRatio > 0.70) {
     score += 15;
-    thoughts.push(`Anlık alım hızı çok agresif (Alış dominansı %${(buyRatio*100).toFixed(0)}). Fiyatı süpürerek yükseltiyorlar.`);
+    thoughts.push(`⚡ Momentum Artışı: Alım hızı %${(buyRatio*100).toFixed(0)} seviyesinde. Kısa vadeli alıcılar piyasayı FOMO'ya sürüklüyor.`);
   } else if (buyRatio < 0.30) {
     score -= 15;
-    thoughts.push(`Yüksek satım hızı mevcut (Satış dominansı %${(100 - buyRatio*100).toFixed(0)}). Panik satışları emilemiyor.`);
+    thoughts.push(`🩸 Satış Baskısı: Satıcılar kontrolü tamamen ele aldı (Satış oranı %${(100 - buyRatio*100).toFixed(0)}).`);
   }
 
   // Cap Score
@@ -50,14 +62,14 @@ export function generateOracleAnalysis(symbol, snap) {
 
   // Construct Final Narrative
   let narrative = '';
-  const prefix = `🤖 FluxAI Analizi (${symbol.replace('USDT','')}): `;
+  const prefix = `🛡️ Flux Oracle v4.0 (${symbol.replace('USDT','')}): `;
   
   if (thoughts.length === 0) {
-    narrative = `${prefix} Makro bazda stabil konsolidasyon gözleniyor. Alıcı ve satıcı grupları dengede.`;
+    narrative = `${prefix} Makro bazda dengeli konsolidasyon (sideways). Piyasa bir sonraki büyük dalga için hacim bekliyor.`;
   } else {
     narrative = `${prefix} ${thoughts.join(' ')}`;
-    if (bias === 'long') narrative += ` Sonuç: Önümüzdeki süreçte momentumun YUKARI (Long avantajı) olması kuvvetle muhtemel.`;
-    if (bias === 'short') narrative += ` Sonuç: İvme zayıflıyor, önümüzdeki 15-45 dakika için yön AŞAĞI (Short avantajı) ağırlıklı.`;
+    if (bias === 'long') narrative += ` STRATEJİ: Momentum pozitif, geri çekilmeler alım fırsatı olarak değerlendirilebilir.`;
+    if (bias === 'short') narrative += ` STRATEJİ: Satıcı baskısı hakim, risk yönetimi ve stop-loss seviyeleri güncellenmeli.`;
   }
 
   return {
