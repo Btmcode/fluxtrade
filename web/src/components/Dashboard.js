@@ -10,6 +10,7 @@ import { useBinanceStream } from '@/hooks/useBinanceStream';
 import SymbolCard from '@/components/SymbolCard';
 import AlertsManager from '@/components/AlertsManager';
 import BacktestPanel from '@/components/BacktestPanel';
+import InfoModal from '@/components/InfoModal';
 import { formatUsd, formatNumber } from '@/lib/utils';
 import { useState, useEffect } from 'react';
 
@@ -59,6 +60,7 @@ export default function Dashboard() {
         </div>
 
         <div className="header-status">
+          <InfoModal />
           <BacktestPanel
             isActive={isBacktesting}
             onStartReplay={startBacktest}
@@ -113,22 +115,34 @@ export default function Dashboard() {
         {/* Stats Row */}
         <div className="stats-row" id="global-stats">
           <div className="stat-card buy">
-            <div className="stat-label">📈 Toplam Alım Hacmi</div>
+            <div className="stat-label">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline><polyline points="16 7 22 7 22 13"></polyline></svg>
+              Toplam Alım Hacmi
+            </div>
             <div className="stat-value buy">{formatUsd(globalStats.totalBuyVolume)}</div>
             <div className="stat-detail">Taker buy orders</div>
           </div>
           <div className="stat-card sell">
-            <div className="stat-label">📉 Toplam Satım Hacmi</div>
+            <div className="stat-label">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 17 13.5 8.5 8.5 13.5 2 7"></polyline><polyline points="16 17 22 17 22 11"></polyline></svg>
+              Toplam Satım Hacmi
+            </div>
             <div className="stat-value sell">{formatUsd(globalStats.totalSellVolume)}</div>
             <div className="stat-detail">Taker sell orders</div>
           </div>
           <div className="stat-card neutral">
-            <div className="stat-label">📊 İşlem Sayısı</div>
+            <div className="stat-label">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
+              İşlem Sayısı
+            </div>
             <div className="stat-value neutral">{formatNumber(globalStats.totalTrades)}</div>
             <div className="stat-detail">aggTrade mesajları</div>
           </div>
           <div className="stat-card flow">
-            <div className="stat-label">💰 Net Para Akışı</div>
+            <div className="stat-label">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+              Net Para Akışı
+            </div>
             <div className={`stat-value ${netFlow >= 0 ? 'positive' : 'negative'}`}>
               {netFlow >= 0 ? '+' : ''}{formatUsd(netFlow)}
             </div>
@@ -144,7 +158,7 @@ export default function Dashboard() {
             const data = snapshots[sym];
             if (!data) {
               return (
-                <div key={sym} className="symbol-card animate-in signal-neutral">
+                <div key={sym} className="symbol-card-premium animate-in signal-neutral">
                   <div className="loading-container" style={{ minHeight: '200px' }}>
                     <div className="loading-spinner" />
                     <div className="loading-text">{sym} bağlanıyor...</div>
