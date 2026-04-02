@@ -11,7 +11,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { createFluxStream, SYMBOLS } from '@/lib/binanceStream';
 import { createPressureEngine } from '@/lib/pressureEngine';
 
-const UPDATE_INTERVAL = 800;
+const UPDATE_INTERVAL = 1000;
 
 export function useBinanceStream() {
   const [snapshots, setSnapshots] = useState({});

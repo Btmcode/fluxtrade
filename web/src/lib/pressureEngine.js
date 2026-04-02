@@ -204,19 +204,33 @@ export function createPressureEngine() {
     };
   }
 
-  function getAllSnapshots() {
-    return Object.keys(symbols).map(getSnapshot);
-  }
-
   function getGlobalStats() {
-    const snaps = getAllSnapshots();
+    const snaps = Object.keys(symbols).map(sym => getSnapshot(sym));
+    const totalBuy = snaps.reduce((a, s) => a + (s.totalBuyVolume || 0), 0);
+    const totalSell = snaps.reduce((a, s) => a + (s.totalSellVolume || 0), 0);
+    
     return {
-      totalTrades: snaps.reduce((a, s) => a + s.totalTradeCount, 0),
-      totalBuyVolume: snaps.reduce((a, s) => a + s.totalBuyVolume, 0),
-      totalSellVolume: snaps.reduce((a, s) => a + s.totalSellVolume, 0),
-      netFlow: snaps.reduce((a, s) => a + s.totalBuyVolume - s.totalSellVolume, 0),
+      totalTrades: snaps.reduce((a, s) => a + (s.totalTradeCount || 0), 0),
+      totalBuyVolume: totalBuy,
+      totalSellVolume: totalSell,
+      netFlow: totalBuy - totalSell,
+      marketTemp: calculateMarketTemp(snaps),
     };
   }
 
-  return { recordTrade, recordTradeWithTimestamp, updateDepth, getSnapshot, getAllSnapshots, getGlobalStats };
+  function calculateMarketTemp(snaps) {
+    if (snaps.length === 0) return 50; // Neutral
+    const avgBuyRatio = snaps.reduce((a, s) => a + (s.buyRatio || 0.5), 0) / snaps.length;
+    return Math.round(avgBuyRatio * 100);
+  }
+
+  return { 
+    recordTrade, 
+    recordTradeWithTimestamp, 
+    updateDepth, 
+    getSnapshot, 
+    getAllSnapshots, 
+    getGlobalStats,
+    getMarketTemperature: () => calculateMarketTemp(Object.keys(symbols).map(getSnapshot))
+  };
 }

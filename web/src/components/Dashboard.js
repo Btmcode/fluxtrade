@@ -93,8 +93,25 @@ export default function Dashboard() {
         <div className="header-brand">
           <div className="header-logo">⚡</div>
           <div>
-            <div className="header-title">FLUXTRADE</div>
-            <div className="header-subtitle">Multi-Exchange İstihbarat Terminali</div>
+            <div className="header-title">FLUXTRADE <span className="build-ver-tag">v3.6-stable</span></div>
+            <div className="header-subtitle">Senior Engineering Terminal — Multi-Exchange</div>
+          </div>
+        </div>
+
+        <div className="header-market-temp">
+          <div className="temp-label">Piyasa Isısı</div>
+          <div className="temp-gauge-track">
+            <div 
+              className="temp-gauge-fill" 
+              style={{ 
+                width: `${globalStats.marketTemp || 50}%`,
+                background: (globalStats.marketTemp || 50) > 50 ? 'var(--buy-primary)' : 'var(--sell-primary)',
+                boxShadow: `0 0 10px ${(globalStats.marketTemp || 50) > 50 ? 'var(--buy-glow)' : 'var(--sell-glow)'}`
+              }} 
+            />
+          </div>
+          <div className="temp-value" style={{ color: (globalStats.marketTemp || 50) > 50 ? 'var(--buy-primary)' : 'var(--sell-primary)' }}>
+            {(globalStats.marketTemp || 50)}% { (globalStats.marketTemp || 50) > 55 ? '🔥 Bul' : (globalStats.marketTemp || 50) < 45 ? '❄️ Bear' : '☁️ Nötr' }
           </div>
         </div>
 

@@ -152,7 +152,8 @@ function createBinanceClient(onTrade, onDepth, onStatus) {
   function retry() {
     if (destroyed || attempts >= MAX_RECONNECT) return;
     attempts++;
-    setTimeout(connect, RECONNECT_DELAY * Math.min(attempts, 5));
+    const delay = Math.min(1000 * Math.pow(2, attempts), 30000) + (Math.random() * 1000);
+    setTimeout(connect, delay);
   }
 
   function destroy() {
@@ -234,7 +235,8 @@ function createBybitClient(onTrade, onDepth, onStatus) {
   function retry() {
     if (destroyed || attempts >= MAX_RECONNECT) return;
     attempts++;
-    setTimeout(connect, RECONNECT_DELAY * Math.min(attempts, 5));
+    const delay = Math.min(1000 * Math.pow(2, attempts), 30000) + (Math.random() * 1000);
+    setTimeout(connect, delay);
   }
 
   function destroy() {
@@ -318,7 +320,8 @@ function createOKXClient(onTrade, onDepth, onStatus) {
   function retry() {
     if (destroyed || attempts >= MAX_RECONNECT) return;
     attempts++;
-    setTimeout(connect, RECONNECT_DELAY * Math.min(attempts, 5));
+    const delay = Math.min(1000 * Math.pow(2, attempts), 30000) + (Math.random() * 1000);
+    setTimeout(connect, delay);
   }
 
   function destroy() {
