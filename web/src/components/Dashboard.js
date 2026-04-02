@@ -1,7 +1,8 @@
 /**
- * FluxTrade — Dashboard Component
- * 
- * Main dashboard layout with header, stats row, symbol cards, and footer.
+ * FluxTrade v3.0 — Dashboard Component
+ *
+ * Main dashboard with per-exchange status indicators,
+ * multi-exchange data grid, alerts, and backtest controls.
  */
 'use client';
 
@@ -12,25 +13,32 @@ import BacktestPanel from '@/components/BacktestPanel';
 import { formatUsd, formatNumber } from '@/lib/utils';
 import { useState, useEffect } from 'react';
 
+const EXCHANGE_LABELS = {
+  binance: { name: 'Binance', emoji: '🟡' },
+  bybit:   { name: 'Bybit',   emoji: '🟠' },
+  okx:     { name: 'OKX',     emoji: '🔵' },
+};
+
 export default function Dashboard() {
-  const { 
-    snapshots, 
-    globalStats, 
-    connectionStatus, 
-    connectionMode,
-    messagesPerSecond, 
+  const {
+    snapshots,
+    globalStats,
+    connectionStatus,
+    exchangeStatuses,
+    connectedCount,
+    messagesPerSecond,
     symbols,
     startBacktest,
     stopBacktest,
-    isBacktesting
+    isBacktesting,
   } = useBinanceStream();
-  
+
   const [currentTime, setCurrentTime] = useState('');
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setCurrentTime(new Date().toLocaleTimeString('tr-TR', { 
-        hour: '2-digit', minute: '2-digit', second: '2-digit' 
+      setCurrentTime(new Date().toLocaleTimeString('tr-TR', {
+        hour: '2-digit', minute: '2-digit', second: '2-digit',
       }));
     }, 1000);
     return () => clearInterval(timer);
@@ -46,25 +54,41 @@ export default function Dashboard() {
           <div className="header-logo">⚡</div>
           <div>
             <div className="header-title">FLUXTRADE</div>
-            <div className="header-subtitle">Canlı Piyasa İstihbarat Terminali</div>
+            <div className="header-subtitle">Multi-Exchange İstihbarat Terminali</div>
           </div>
         </div>
 
         <div className="header-status">
-          <BacktestPanel 
+          <BacktestPanel
             isActive={isBacktesting}
             onStartReplay={startBacktest}
             onStopReplay={stopBacktest}
           />
           <AlertsManager snapshots={snapshots} />
-          
-          <div className={`status-badge ${connectionStatus}`} id="connection-status">
-            <span className="status-dot" />
-            {connectionStatus === 'connected' && connectionMode === 'aggregator' && '🟢 Aggregator'}
-            {connectionStatus === 'connected' && connectionMode === 'direct-binance' && '🟡 Binance Direct'}
-            {connectionStatus === 'connecting' && 'Bağlanıyor...'}
-            {connectionStatus === 'disconnected' && 'Bağlantı Kesildi'}
-            {connectionStatus === 'backtesting' && '⏪ Backtest Aktif'}
+
+          {/* Per-exchange status badges */}
+          <div className="exchange-badges" id="exchange-status">
+            {isBacktesting ? (
+              <div className="status-badge backtesting">
+                <span className="status-dot" />
+                ⏪ Backtest Aktif
+              </div>
+            ) : (
+              Object.entries(exchangeStatuses).map(([exch, status]) => {
+                const label = EXCHANGE_LABELS[exch];
+                const isOk = status === 'connected';
+                return (
+                  <div
+                    key={exch}
+                    className={`exchange-pill ${isOk ? 'connected' : 'disconnected'}`}
+                    title={`${label.name}: ${status}`}
+                  >
+                    <span className="pill-dot" />
+                    {label.name}
+                  </div>
+                );
+              })
+            )}
           </div>
 
           <div className="header-stats">
@@ -136,9 +160,9 @@ export default function Dashboard() {
       {/* ─── Footer ─── */}
       <footer className="footer" id="main-footer">
         <div className="footer-left">
-          <span>⚡ FluxTrade v2.0</span>
+          <span>⚡ FluxTrade v3.0</span>
           <span>•</span>
-          <span>📡 {connectionMode === 'aggregator' ? 'Kaynak: Multi-Exchange Aggregator (Binance + Bybit + OKX)' : connectionMode === 'direct-binance' ? 'Kaynak: Binance Direct (Fallback)' : 'Backtest Modu'}</span>
+          <span>📡 {connectedCount}/3 Borsa Bağlı (Binance + Bybit + OKX)</span>
           <span>•</span>
           <span>CVD: 60s pencere | Baskı: 10s pencere</span>
         </div>

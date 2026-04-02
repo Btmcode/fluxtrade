@@ -992,3 +992,61 @@ body::after {
   0% { box-shadow: inset 0 0 0 3px var(--accent-purple), inset 0 0 20px rgba(167, 139, 250, 0.05); }
   100% { box-shadow: inset 0 0 0 4px var(--accent-purple), inset 0 0 60px rgba(167, 139, 250, 0.2); }
 }
+
+/* ═══════════════════════════════════════════════════════
+   Exchange Connection Pills
+   ═══════════════════════════════════════════════════════ */
+
+.exchange-badges {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.exchange-pill {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  font-family: var(--font-mono);
+  letter-spacing: 0.02em;
+  border: 1px solid var(--border-primary);
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  transition: all 0.3s ease;
+}
+
+.exchange-pill.connected {
+  border-color: rgba(52, 211, 153, 0.3);
+  background: rgba(52, 211, 153, 0.08);
+  color: #34d399;
+}
+
+.exchange-pill.disconnected,
+.exchange-pill.connecting,
+.exchange-pill.error {
+  border-color: rgba(239, 68, 68, 0.2);
+  background: rgba(239, 68, 68, 0.05);
+  color: var(--text-tertiary);
+}
+
+.pill-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--text-tertiary);
+}
+
+.exchange-pill.connected .pill-dot {
+  background: #34d399;
+  box-shadow: 0 0 6px rgba(52, 211, 153, 0.5);
+  animation: pillGlow 2s infinite alternate;
+}
+
+@keyframes pillGlow {
+  0% { box-shadow: 0 0 4px rgba(52, 211, 153, 0.3); }
+  100% { box-shadow: 0 0 8px rgba(52, 211, 153, 0.6); }
+}

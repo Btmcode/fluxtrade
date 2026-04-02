@@ -1,9 +1,9 @@
 /**
- * FluxTrade — useFluxStream Hook
+ * FluxTrade v3.0 — useFluxStream Hook
  *
- * Connects to the hybrid WebSocket stream (aggregator → Binance fallback),
- * feeds trades and depth into the pressure engine, provides snapshots.
- * Includes Backtest Replay support with proper speed & timestamp handling.
+ * Browser-based multi-exchange aggregator hook.
+ * Connects directly to Binance, Bybit, and OKX — no backend needed.
+ * Includes Backtest Replay with speed and timestamp support.
  */
 'use client';
 
@@ -21,8 +21,11 @@ export function useBinanceStream() {
     totalSellVolume: 0,
     netFlow: 0,
   });
-  const [connectionStatus, setConnectionStatus] = useState('connecting');
-  const [connectionMode, setConnectionMode] = useState('aggregator');
+  const [exchangeStatuses, setExchangeStatuses] = useState({
+    binance: 'connecting',
+    bybit: 'connecting',
+    okx: 'connecting',
+  });
   const [messagesPerSecond, setMessagesPerSecond] = useState(0);
 
   // Backtest State
@@ -31,6 +34,18 @@ export function useBinanceStream() {
 
   const engineRef = useRef(null);
   const msgCountRef = useRef(0);
+
+  // Derive a simple overall connection status
+  const connectionStatus = isBacktesting
+    ? 'backtesting'
+    : Object.values(exchangeStatuses).some(s => s === 'connected')
+      ? 'connected'
+      : Object.values(exchangeStatuses).every(s => s === 'disconnected' || s === 'error')
+        ? 'disconnected'
+        : 'connecting';
+
+  // Count connected exchanges
+  const connectedCount = Object.values(exchangeStatuses).filter(s => s === 'connected').length;
 
   // ─── Live Mode ───
   useEffect(() => {
@@ -55,12 +70,12 @@ export function useBinanceStream() {
             engine.updateDepth(depthData.s, depthData.obi);
           }
         },
-        (status) => setConnectionStatus(status),
-        (mode) => setConnectionMode(mode),
+        ({ exchange, status }) => {
+          setExchangeStatuses(prev => ({ ...prev, [exchange]: status }));
+        },
       );
     } else {
-      setConnectionStatus('backtesting');
-      setConnectionMode('backtest');
+      setExchangeStatuses({ binance: 'paused', bybit: 'paused', okx: 'paused' });
     }
 
     const updateInterval = setInterval(() => {
@@ -88,9 +103,6 @@ export function useBinanceStream() {
     const { trades, speed } = backtestRef.current;
     let index = 0;
 
-    // Pump trades at a rate proportional to speed
-    // At speed=1: ~100 trades every 100ms ≈ 1000 trades/sec
-    // At speed=100: ~100 trades every 1ms ≈ virtually instant
     const batchSize = Math.max(50, speed * 10);
     const intervalMs = Math.max(10, Math.floor(100 / speed));
 
@@ -105,7 +117,6 @@ export function useBinanceStream() {
           return;
         }
         const t = trades[index];
-        // Use the CSV timestamp so sliding windows work on simulated time
         engine.recordTradeWithTimestamp(t, t.timestampMs);
         msgCountRef.current++;
         index++;
@@ -134,7 +145,8 @@ export function useBinanceStream() {
     snapshots,
     globalStats,
     connectionStatus,
-    connectionMode,
+    exchangeStatuses,
+    connectedCount,
     messagesPerSecond,
     symbols: SYMBOLS.map(s => s.toUpperCase()),
     startBacktest,
