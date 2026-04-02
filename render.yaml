@@ -4,9 +4,8 @@ services:
     runtime: python
     region: frankfurt
     plan: free
-    rootDir: backend
     buildCommand: pip install -r requirements.txt
-    startCommand: python server.py
+    startCommand: cd backend && uvicorn api_gateway:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: PYTHON_VERSION
         value: "3.11"

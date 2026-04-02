@@ -8,7 +8,7 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { createFluxStream, SYMBOLS } from '@/lib/binanceStream';
+import { createBackendStream } from '@/lib/backendStream';
 import { createPressureEngine } from '@/lib/pressureEngine';
 
 const UPDATE_INTERVAL = 1000;
@@ -61,7 +61,7 @@ export function useBinanceStream() {
     let stream = null;
 
     if (!isBacktesting) {
-      stream = createFluxStream(
+      stream = createBackendStream(
         (trade) => {
           engine.recordTrade(trade);
           msgCountRef.current++;
@@ -89,7 +89,8 @@ export function useBinanceStream() {
 
     const updateInterval = setInterval(() => {
       const allSnaps = {};
-      SYMBOLS.forEach(sym => {
+      const activeSymbols = stream ? stream.getSymbols() : ['BTCUSDT', 'ETHUSDT', 'SOLUSDT', 'BNBUSDT', 'XRPUSDT', 'YFIUSDT', 'AVAXUSDT', 'LINKUSDT'];
+      activeSymbols.forEach(sym => {
         const key = sym.toUpperCase();
         allSnaps[key] = engine.getSnapshot(key);
       });

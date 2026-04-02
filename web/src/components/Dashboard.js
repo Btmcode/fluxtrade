@@ -6,7 +6,8 @@
  */
 'use client';
 
-import { useBinanceStream } from '@/hooks/useBinanceStream';
+import { useUnifiedStream } from '@/hooks/useUnifiedStream';
+import { motion, AnimatePresence } from 'framer-motion';
 import SymbolCard from '@/components/SymbolCard';
 import AlertsManager from '@/components/AlertsManager';
 import BacktestPanel from '@/components/BacktestPanel';
@@ -15,8 +16,8 @@ import OracleModal from '@/components/OracleModal';
 import WhaleFeed from '@/components/WhaleFeed';
 import SymbolDetailModal from '@/components/SymbolDetailModal';
 import AIRadar from '@/components/AIRadar';
-import { formatUsd, formatNumber, formatPrice } from '@/lib/utils';
-import { useState, useEffect, useRef } from 'react';
+import Link from 'next/link';
+import { LogIn, LogOut, User as UserIcon, Save, PieChart } from 'lucide-react';
 
 const EXCHANGE_LABELS = {
   binance: { name: 'Binance', emoji: '🟡' },
@@ -25,23 +26,83 @@ const EXCHANGE_LABELS = {
 };
 
 export default function Dashboard() {
-  const {
-    snapshots,
-    globalStats,
-    connectionStatus,
-    exchangeStatuses,
-    connectedCount,
-    messagesPerSecond,
-    symbols: rawSymbols,
-    startBacktest,
-    stopBacktest,
-    isBacktesting,
-    whaleTrades,
-  } = useBinanceStream();
+  const { marketData, lastAlert, isConnected } = useUnifiedStream();
+  const [alerts, setAlerts] = useState([]);
+  const { data: session } = useSession();
+
+  // Manage alert history
+  useEffect(() => {
+    if (lastAlert) {
+      setAlerts(prev => [lastAlert, ...prev].slice(0, 5));
+    }
+  }, [lastAlert]);
+
+  // Legacy compatibility: Map marketData to snapshots format
+  const snapshots = marketData;
+  const connectedCount = isConnected ? 3 : 0; // Simplified for MVP
+  const connectionStatus = isConnected ? 'connected' : 'connecting';
+  const exchangeStatuses = { binance: isConnected ? 'connected' : 'off', bybit: isConnected ? 'connected' : 'off', okx: isConnected ? 'connected' : 'off' };
+  const globalStats = { totalTrades: 0, totalBuyVolume: 0, totalSellVolume: 0, netFlow: 0 }; // Backend will provide these later
+  const messagesPerSecond = 0; // Backend will provide this later
+  const whaleTrades = []; // Phase 19 will re-integrate this
+  const isBacktesting = false;
+  const startBacktest = () => {};
+  const stopBacktest = () => {};
 
   const [currentTime, setCurrentTime] = useState('');
   const [autoSort, setAutoSort] = useState(true);
+  // Dynamic Symbol Selection (BTC + Top Momentum from Aggregator)
+  const activeSymbols = Object.keys(marketData);
+  const displaySymbols = ["BTCUSDT", ...activeSymbols.filter(s => s !== "BTCUSDT")].slice(0, 12);
+  const symbols = displaySymbols;
+
   const [sortedSymbols, setSortedSymbols] = useState([]);
+  const [isSaving, setIsSaving] = useState(false);
+
+  // Load user configuration from DB
+  useEffect(() => {
+    if (session?.user) {
+      const fetchWatchlist = async () => {
+        try {
+          const res = await fetch('/api/watchlist');
+          const data = await res.json();
+          if (Array.isArray(data) && data.length > 0) {
+            const savedSymbols = JSON.parse(data[0].symbols);
+            if (savedSymbols.length > 0) {
+              setSymbols(savedSymbols);
+            }
+          }
+        } catch (error) {
+          console.error('Watchlist Yükleme Hatası:', error);
+        }
+      };
+      fetchWatchlist();
+    }
+  }, [session]);
+
+  const handleSaveConfig = async () => {
+    if (!session) return;
+    setIsSaving(true);
+    try {
+      const res = await fetch('/api/watchlist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: 'Default',
+          symbols: symbols
+        }),
+      });
+      if (res.ok) {
+        alert('Yapılandırma başarıyla kaydedildi! ✅');
+      } else {
+        throw new Error('Kaydetme hatası');
+      }
+    } catch (error) {
+      alert('Hata: Yapılandırma kaydedilemedi. ❌');
+    } finally {
+      setIsSaving(false);
+    }
+  };
   const [selectedSymbol, setSelectedSymbol] = useState(null);
   const lastSortTimeRef = useRef(0);
 
@@ -125,7 +186,44 @@ export default function Dashboard() {
             {autoSort ? '⚡ Akıllı Sıralama' : '⏸️ Sabit Düzen'}
           </button>
           <OracleModal snapshots={snapshots} />
+          <Link href="/portfolio" className="premium-glass-btn portfolio-btn no-underline">
+            <PieChart size={16} />
+            <span>Portföy</span>
+          </Link>
           <InfoModal />
+          
+          {session ? (
+            <div className="user-profile-container">
+              <button 
+                className="premium-glass-btn user-btn" 
+                onClick={() => signOut()}
+                title={`${session.user.name} olarak çıkış yap`}
+              >
+                <UserIcon size={16} />
+                <span className="user-name-trim">{session.user.name?.split(' ')[0]}</span>
+                <LogOut size={14} className="logout-icon-sub" />
+              </button>
+              <button 
+                className={`premium-glass-btn save-btn ${isSaving ? 'loading-pulse' : ''}`}
+                onClick={handleSaveConfig}
+                disabled={isSaving}
+                title="İzleme listesini ve ayarları buluta kaydet"
+              >
+                <Save size={16} />
+                <span>{isSaving ? 'Bekleyin...' : 'Kaydet'}</span>
+              </button>
+            </div>
+          ) : (
+            <button 
+              className="premium-glass-btn login-btn" 
+              onClick={() => signIn('github')}
+              title="GitHub ile Terminale Bağlan (Veri Senkronizasyonu)"
+            >
+              <LogIn size={16} />
+              <span>Bağlan</span>
+            </button>
+          )}
+
           <BacktestPanel
             isActive={isBacktesting}
             onStartReplay={startBacktest}
@@ -246,6 +344,56 @@ export default function Dashboard() {
             onClose={() => setSelectedSymbol(null)}
           />
         )}
+
+        {/* Floating Signal Toasts */}
+        <div className="fixed bottom-12 right-8 z-[100] flex flex-col gap-4 max-w-[380px]">
+          <AnimatePresence mode="popLayout">
+            {alerts.map((alert, idx) => (
+              <motion.div
+                key={alert.timestamp || idx}
+                initial={{ opacity: 0, y: 30, scale: 0.9, filter: 'blur(8px)' }}
+                animate={{ opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }}
+                exit={{ opacity: 0, scale: 0.5, filter: 'blur(8px)', transition: { duration: 0.2 } }}
+                layout
+                className={`relative overflow-hidden p-4 rounded-2xl border backdrop-blur-xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] flex items-center gap-4 border-white/10 ${
+                  alert.type === 'WHALE_ALERT' 
+                  ? 'bg-blue-600/10' 
+                  : 'bg-amber-500/10'
+                }`}
+              >
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-2xl shadow-inner ${
+                  alert.type === 'WHALE_ALERT' ? 'bg-blue-500/20 text-blue-400' : 'bg-amber-500/20 text-amber-400'
+                }`}>
+                  {alert.type === 'WHALE_ALERT' ? '🐋' : '⚡'}
+                </div>
+                
+                <div className="flex-1 overflow-hidden">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-[10px] font-black tracking-widest uppercase opacity-40">
+                      {alert.type.replace('_', ' ')}
+                    </span>
+                    <span className="text-[8px] font-mono opacity-20">
+                      NOW
+                    </span>
+                  </div>
+                  <div className="flex items-baseline gap-2">
+                    <h4 className="text-lg font-black text-white truncate">{alert.symbol}</h4>
+                    <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${
+                      alert.side === 'BUY' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400'
+                    }`}>
+                      {alert.type === 'WHALE_ALERT' ? alert.side : 'PULSE'}
+                    </span>
+                  </div>
+                  <p className="text-xs font-semibold text-white/70">
+                    {alert.type === 'WHALE_ALERT' 
+                      ? `$${(alert.value / 1000).toFixed(0)}K Transaction` 
+                      : `${alert.label}`}
+                  </p>
+                </div>
+              </motion.div>
+            ))}
+          </AnimatePresence>
+        </div>
       </main>
 
       <footer className="footer" id="main-footer">

@@ -12,7 +12,7 @@ logger = logging.getLogger("FluxBackend")
 # Global State
 # ═══════════════════════════════════════════════════════
 connected_clients: Set = set()
-SYMBOLS = ["BTCUSDT", "ETHUSDT", "SOLUSDT", "BNBUSDT", "XRPUSDT"]
+SYMBOLS = ["BTCUSDT", "ETHUSDT", "SOLUSDT", "BNBUSDT", "XRPUSDT", "YFIUSDT", "AVAXUSDT", "LINKUSDT"]
 
 # OKX uses different symbol format: BTC-USDT instead of BTCUSDT
 OKX_SYMBOL_MAP = {

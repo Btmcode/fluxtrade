@@ -10,7 +10,7 @@ export function generateOracleAnalysis(symbol, snap) {
   let thoughts = [];
   let bias = 'nötr';
 
-  const { obi, currentBuyVolume, currentSellVolume, windowCvd, buyRatio } = snap;
+  const { obi, windowCvd, buyRatio } = snap;
   
   // OBI Logic
   if (obi > 0.65) {
@@ -62,14 +62,12 @@ export function generateOracleAnalysis(symbol, snap) {
 
   // Construct Final Narrative
   let narrative = '';
-  const prefix = `🛡️ Flux Oracle v4.0 (${symbol.replace('USDT','')}): `;
+  const prefix = `🛡️ Oracle: `;
   
   if (thoughts.length === 0) {
-    narrative = `${prefix} Makro bazda dengeli konsolidasyon (sideways). Piyasa bir sonraki büyük dalga için hacim bekliyor.`;
+    narrative = `${prefix} Makro bazda dengeli konsolidasyon.`;
   } else {
-    narrative = `${prefix} ${thoughts.join(' ')}`;
-    if (bias === 'long') narrative += ` STRATEJİ: Momentum pozitif, geri çekilmeler alım fırsatı olarak değerlendirilebilir.`;
-    if (bias === 'short') narrative += ` STRATEJİ: Satıcı baskısı hakim, risk yönetimi ve stop-loss seviyeleri güncellenmeli.`;
+    narrative = `${prefix} ${thoughts[0]}`; // Keep it concise for UI
   }
 
   return {
@@ -77,4 +75,42 @@ export function generateOracleAnalysis(symbol, snap) {
     text: narrative,
     bias
   };
+}
+
+/**
+ * Generates a high-level cross-market narrative.
+ */
+export function generateMarketNarrative(snapshots) {
+  if (!snapshots || Object.keys(snapshots).length === 0) return "Global piyasa verileri senkronize ediliyor...";
+
+  const snaps = Object.values(snapshots);
+  const avgBuyRatio = snaps.reduce((acc, s) => acc + s.buyRatio, 0) / snaps.length;
+  const totalCvd = snaps.reduce((acc, s) => acc + s.windowCvd, 0);
+  
+  const btcSnap = snapshots["BTCUSDT"];
+  const alts = Object.entries(snapshots).filter(([s]) => s !== "BTCUSDT").map(([_, v]) => v);
+  const altAvgBuyRatio = alts.reduce((acc, s) => acc + s.buyRatio, 0) / alts.length;
+
+  // Narrative Heuristics
+  if (btcSnap && btcSnap.buyRatio > 0.6 && altAvgBuyRatio < 0.45) {
+    return "MARKET STORY: Bitcoin leading the charge, institutions focusing on the major. Altcoins lagging - rotation expected.";
+  }
+  
+  if (totalCvd > 1000000) {
+    return "MARKET STORY: Aggressive global accumulation detected. Whales are sweeping liquidity across all monitored exchanges.";
+  }
+
+  if (totalCvd < -1000000) {
+    return "MARKET STORY: Significant capital flight. Large players are offloading spot positions globally. Risk-off environment.";
+  }
+
+  if (avgBuyRatio > 0.55) {
+    return "MARKET STORY: Bullish momentum building. Traders are aggressively hitting the ask side. High velocity across BTC and major ALTs.";
+  }
+
+  if (avgBuyRatio < 0.45) {
+    return "MARKET STORY: Bearish distribution phase. Sellers are dominating the order flow. Caution advised on spot entries.";
+  }
+
+  return "MARKET STORY: Sideways consolidation. Liquidity is balanced as the market awaits the next institutional move.";
 }
