@@ -10,186 +10,220 @@ export default function InfoModal() {
       <button 
         className="premium-glass-btn info-trigger-btn"
         onClick={() => setIsOpen(true)}
-        title="Nasıl Çalışır?"
       >
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <circle cx="12" cy="12" r="10"></circle>
           <line x1="12" y1="16" x2="12" y2="12"></line>
           <line x1="12" y1="8" x2="12.01" y2="8"></line>
         </svg>
-        Nasıl Çalışır?
+        Keşfet
       </button>
 
       {isOpen && (
-        <div className="fullscreen-overlay animate-fade-in" onClick={() => setIsOpen(false)}>
-          <div className="premium-modal animate-scale-up" onClick={e => e.stopPropagation()}>
-            <button className="modal-close-btn" onClick={() => setIsOpen(false)}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-            </button>
-
-            <div className="modal-header-hero">
-              <div className="hero-icon info-icon">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
-              </div>
-              <h2>FluxTrade Terminali</h2>
-              <p>Kurumsal seviye, tarayıcı tabanlı kripto istihbarat platformu.</p>
+        <div className="apple-fullscreen-presentation animate-fade-in">
+          
+          <button className="apple-close-btn" onClick={() => setIsOpen(false)}>
+            <span>Kapat</span>
+            <div className="close-circle">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
             </div>
+          </button>
 
-            <div className="info-content-scroll">
-              <div className="info-section">
-                <h3><span className="sec-num">1</span> Bu Proje Nedir?</h3>
-                <p>
-                  FluxTrade, kripto para piyasalarındaki mikro yapısal hareketleri (order flow, likidite değişimleri) gerçek zamanlı analiz eden <strong>Apple kalitesinde premium bir gösterge panelidir.</strong> 
-                  Sıradan grafiklerin ötesine geçerek piyasanın "içyüzünü" gösterir.
-                </p>
-              </div>
+          <div className="presentation-scroll-container">
+            
+            {/* HERO SECTION */}
+            <section className="apple-hero-section">
+              <div className="hero-glow"></div>
+              <h1 className="apple-hero-title">FluxTrade 3.</h1>
+              <h2 className="apple-hero-subtitle">Borsa verilerine yepyeni bir kutlama.</h2>
+              <p className="apple-hero-text">
+                Kripto dünyasının devleri Binance, Bybit ve OKX'i aynı anda dinleyerek, orderflow ve likidite dengesini saniyede 100 kere tarayıcınızda işler. Gecikme yok. Aracı sunucu yok. Sadece saf, kesintisiz veri.
+              </p>
+            </section>
 
-              <div className="info-section">
-                <h3><span className="sec-num">2</span> Nasıl Çalışır?</h3>
-                <p>
-                  Terminal, gücünü <strong>Browser-Native Multi-Exchange</strong> mimarisinden alır. Aracı bir backend sunucusuna ihtiyaç duymadan, tarayıcınız üzerinden doğrudan <strong>Binance, Bybit ve OKX</strong> WebSocket verilerine bağlanır.
-                </p>
-                <div className="metric-cards">
-                  <div className="metric-card">
-                    <div className="m-title">OBI (Order Book Imbalance)</div>
-                    <div className="m-desc">Emir defterindeki alım (Bid) ve satım (Ask) likidite oranını (0 ile 1 arası) ölçer. Yüksek OBI, alım duvarlarının kalın olduğunu gösterir.</div>
-                  </div>
-                  <div className="metric-card">
-                    <div className="m-title">CVD (Cumulative Volume Delta)</div>
-                    <div className="m-desc">Market alımları ile market satımları arasındaki net hacim farkını (USD) gösterir. Akıllı para (smart money) eğilimini yakalar.</div>
+            {/* BENTO GRID FEATURES SECTION */}
+            <section className="apple-bento-section">
+              <div className="bento-grid">
+                
+                {/* OBI Card */}
+                <div className="bento-card card-large">
+                  <div className="card-bg-gradient gradient-cyan"></div>
+                  <div className="bento-content">
+                    <div className="bento-icon">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#22d3ee" strokeWidth="2"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+                    </div>
+                    <h3>Order Book Imbalance (OBI)</h3>
+                    <p>Likidite duvarlarının arkasını görün. Emir defterindeki anlık dengesizlikleri yüzdelik olarak (Örn: 80% Alış Duvarı) tespit eder.</p>
                   </div>
                 </div>
-              </div>
 
-              <div className="info-section">
-                <h3><span className="sec-num">3</span> Nasıl Kullanılır?</h3>
-                <ul className="feature-list">
-                  <li>
-                    <strong>Sinyal Halkaları (Radial Gauges):</strong> Kartlardaki yuvarlak gösterge yeşile döndüğünde güçlü bir alım momentumu, kırmızıda ise satım baskısı vardır.
-                  </li>
-                  <li>
-                    <strong>Zaman Makinesi (Backtest):</strong> Kendi algoritmalarınızı (veya dışa aktarılan trade history CSV dosyalarını) geçmiş verilerle test etmek için "Zaman Makinesi" butonunu kullanın. Canlı veriyi durdurup geçmişi istediğiniz hızda tekrar oynatır.
-                  </li>
-                  <li>
-                    <strong>Bildirim Merkezi:</strong> Sizi sürekli ekrana kilitlemez. Zil ikonuna tıklayıp <em>"BTC OBI değeri 0.8 üzerine çıkarsa"</em> gibi akıllı alarmlar kurabilirsiniz.
-                  </li>
-                </ul>
+                {/* CVD Card */}
+                <div className="bento-card card-medium">
+                  <div className="card-bg-gradient gradient-purple"></div>
+                  <div className="bento-content">
+                    <div className="bento-icon">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#c084fc" strokeWidth="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+                    </div>
+                    <h3>Kümülatif Hacim (CVD)</h3>
+                    <p>Piyasadaki saf "Akıllı Para" (Smart Money) ağırlığını USD cinsinden ölçer. Suni hareketleri filtreler.</p>
+                  </div>
+                </div>
+
+                {/* Automation Card */}
+                <div className="bento-card card-small">
+                  <div className="card-bg-gradient gradient-green"></div>
+                  <div className="bento-content">
+                    <div className="bento-icon">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#34d399" strokeWidth="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                    </div>
+                    <h3>Zaman Makinesi</h3>
+                    <p>Kendi stratejilerinizi geçmiş verilerle (CSV) gerçek zamanlı yeniden oynatarak simüle edin.</p>
+                  </div>
+                </div>
+
+                {/* Velocity Card */}
+                <div className="bento-card card-small">
+                  <div className="card-bg-gradient gradient-orange"></div>
+                  <div className="bento-content">
+                    <div className="bento-icon">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fb923c" strokeWidth="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                    </div>
+                    <h3>Hız Sensörü</h3>
+                    <p>Alım ve satım ivmesini renkli Radial (Halka) grafiklerle anlık takip edin.</p>
+                  </div>
+                </div>
+
               </div>
-            </div>
-            
-            <div className="modal-footer">
-              v3.0 Edge Architecture • Client-Side Processing
-            </div>
+            </section>
           </div>
         </div>
       )}
 
       <style jsx>{`
-        .target-wrapper { position: relative; }
-
-        .premium-glass-btn {
-          background: rgba(255,255,255,0.03);
-          border: 1px solid rgba(255,255,255,0.1);
-          color: var(--text-primary);
-          padding: 8px 16px;
-          border-radius: 100px;
-          cursor: pointer;
-          display: flex; align-items: center; gap: 8px;
-          font-size: 0.8rem; font-weight: 500;
-          transition: all var(--transition-med);
-          backdrop-filter: blur(10px);
+        /* Header Button Trigger */
+        .info-trigger-btn {
+          color: #f1f5f9;
+          border-color: rgba(255,255,255,0.1);
         }
-        .premium-glass-btn:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.2); }
-        .info-trigger-btn { color: #93c5fd; border-color: rgba(147, 197, 253, 0.2); }
-        .info-trigger-btn:hover { background: rgba(147, 197, 253, 0.1); border-color: rgba(147, 197, 253, 0.4); }
+        .info-trigger-btn:hover { background: rgba(255,255,255,0.1); }
 
-        .fullscreen-overlay {
-          position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-          background: rgba(0,0,0,0.6); backdrop-filter: blur(8px);
-          z-index: 1000; display: flex; align-items: center; justify-content: center;
+        /* Fullscreen Takeover */
+        .apple-fullscreen-presentation {
+          position: fixed;
+          top: 0; left: 0; right: 0; bottom: 0;
+          background: rgba(4, 6, 10, 0.85);
+          backdrop-filter: blur(40px) saturate(180%);
+          -webkit-backdrop-filter: blur(40px) saturate(180%);
+          z-index: 9999;
+          display: flex;
+          flex-direction: column;
+          color: white;
+          overflow: hidden;
         }
 
-        .animate-fade-in { animation: fadeIn 0.3s ease-out; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .animate-fade-in { animation: fadeIn 0.5s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: scale(1.02); } to { opacity: 1; transform: scale(1); } }
 
-        .premium-modal {
-          position: relative; width: 90%; max-width: 650px; max-height: 85vh;
-          background: var(--bg-card); border: 1px solid var(--border-primary);
-          border-radius: var(--radius-xl); box-shadow: 0 30px 60px -15px rgba(0,0,0,0.6);
-          padding: 40px; overflow: hidden; display: flex; flex-direction: column;
+        /* Floating Close Button */
+        .apple-close-btn {
+          position: absolute;
+          top: 30px; right: 40px;
+          display: flex; align-items: center; gap: 12px;
+          background: none; border: none; color: #a1a1aa;
+          cursor: pointer; z-index: 100;
+          font-size: 0.85rem; font-weight: 500; letter-spacing: 0.5px;
+          transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        .premium-modal::before {
-          content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
-          background: linear-gradient(90deg, transparent, rgba(56, 189, 248, 0.3), transparent);
-        }
-
-        .animate-scale-up { animation: scaleUp 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
-        @keyframes scaleUp { 
-          from { opacity: 0; transform: scale(0.96) translateY(20px); } 
-          to { opacity: 1; transform: scale(1) translateY(0); } 
-        }
-
-        .modal-close-btn {
-          position: absolute; top: 24px; right: 24px;
+        .close-circle {
+          width: 40px; height: 40px; border-radius: 50%;
           background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
-          color: var(--text-tertiary); width: 32px; height: 32px; border-radius: 50%;
           display: flex; align-items: center; justify-content: center;
-          cursor: pointer; transition: all 0.2s; z-index: 10;
+          transition: all 0.3s;
         }
-        .modal-close-btn:hover { background: rgba(255,255,255,0.1); color: var(--text-primary); transform: rotate(90deg); }
+        .apple-close-btn:hover { color: white; }
+        .apple-close-btn:hover .close-circle { background: rgba(255,255,255,0.15); transform: rotate(90deg) scale(1.05); }
 
-        .modal-header-hero { text-align: center; margin-bottom: 30px; flex-shrink: 0; }
-        .info-icon {
-          width: 64px; height: 64px; margin: 0 auto 16px;
-          background: linear-gradient(135deg, rgba(56, 189, 248, 0.2), rgba(56, 189, 248, 0.05));
-          border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 50%;
-          display: flex; align-items: center; justify-content: center;
-          color: #7dd3fc; box-shadow: 0 0 20px rgba(56, 189, 248, 0.15);
+        /* Presentation Scroll Area */
+        .presentation-scroll-container {
+          flex: 1; overflow-y: auto; overflow-x: hidden;
+          padding: 80px 20px 100px;
+          display: flex; flex-direction: column; align-items: center;
         }
-        .modal-header-hero h2 { font-size: 1.6rem; color: var(--text-primary); margin-bottom: 8px; font-weight: 700; letter-spacing: -0.5px; }
-        .modal-header-hero p { color: var(--text-secondary); font-size: 0.95rem; font-weight: 400; }
+        .presentation-scroll-container::-webkit-scrollbar { width: 0; }
 
-        .info-content-scroll {
-          overflow-y: auto; padding-right: 12px;
-          display: flex; flex-direction: column; gap: 28px;
+        /* Hero Section */
+        .apple-hero-section {
+          text-align: center; max-width: 800px; margin: 0 auto 80px; position: relative;
         }
-        .info-content-scroll::-webkit-scrollbar { width: 6px; }
-        .info-content-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+        .hero-glow {
+          position: absolute; top: -50%; left: 50%; transform: translateX(-50%);
+          width: 100%; height: 200%; background: radial-gradient(circle, rgba(56, 189, 248, 0.15) 0%, transparent 70%);
+          z-index: -1; pointer-events: none;
+        }
+        .apple-hero-title {
+          font-size: clamp(3rem, 6vw, 5rem); font-weight: 600; letter-spacing: -0.04em;
+          background: linear-gradient(180deg, #ffffff 0%, #a1a1aa 100%);
+          -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+          margin-bottom: 5px;
+        }
+        .apple-hero-subtitle {
+          font-size: clamp(1.5rem, 3vw, 2.5rem); font-weight: 400; color: #a1a1aa; letter-spacing: -0.02em;
+          margin-bottom: 30px;
+        }
+        .apple-hero-text {
+          font-size: 1.15rem; color: #71717a; line-height: 1.6; max-width: 600px; margin: 0 auto;
+          font-weight: 300;
+        }
 
-        .info-section h3 {
-          font-size: 1.05rem; color: var(--text-primary); margin-bottom: 12px;
-          display: flex; align-items: center; gap: 10px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 8px;
+        /* Bento Grid Section */
+        .apple-bento-section {
+          width: 100%; max-width: 1100px; margin: 0 auto;
         }
-        .sec-num {
-          background: rgba(56, 189, 248, 0.15); color: #7dd3fc;
-          width: 24px; height: 24px; border-radius: 50%;
-          display: inline-flex; align-items: center; justify-content: center;
-          font-size: 0.75rem; font-weight: 700; font-family: var(--font-mono);
+        .bento-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          grid-template-rows: auto auto;
+          gap: 20px;
         }
+
+        .bento-card {
+          position: relative; background: rgba(255,255,255,0.02);
+          border: 1px solid rgba(255,255,255,0.05); border-radius: 24px;
+          padding: 40px; overflow: hidden;
+          transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s;
+        }
+        .bento-card:hover { transform: translateY(-4px) scale(1.01); background: rgba(255,255,255,0.03); }
+
+        .card-large { grid-column: span 2; }
+        .card-medium { grid-column: span 1; }
+        .card-small { grid-column: span 1; }
+
+        .card-bg-gradient {
+          position: absolute; top: -50%; right: -50%; width: 100%; height: 100%;
+          border-radius: 50%; opacity: 0.15; filter: blur(60px); z-index: 0;
+          transition: opacity 0.5s;
+        }
+        .bento-card:hover .card-bg-gradient { opacity: 0.3; }
         
-        .info-section p { color: var(--text-secondary); font-size: 0.9rem; line-height: 1.6; }
-        .info-section strong { color: var(--text-primary); font-weight: 600; }
+        .gradient-cyan { background: #22d3ee; }
+        .gradient-purple { background: #c084fc; }
+        .gradient-green { background: #34d399; }
+        .gradient-orange { background: #fb923c; }
 
-        .metric-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }
-        .metric-card {
-          background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08);
-          padding: 16px; border-radius: 12px; transition: 0.3s;
+        .bento-content { position: relative; z-index: 1; display: flex; flex-direction: column; height: 100%; }
+        .bento-icon {
+          width: 48px; height: 48px; border-radius: 14px;
+          background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+          display: flex; align-items: center; justify-content: center; margin-bottom: 24px;
         }
-        .metric-card:hover { border-color: rgba(56, 189, 248, 0.3); background: rgba(56, 189, 248, 0.02); }
-        .m-title { font-family: var(--font-mono); font-weight: 600; color: #7dd3fc; font-size: 0.85rem; margin-bottom: 8px; }
-        .m-desc { font-size: 0.8rem; color: var(--text-tertiary); line-height: 1.5; }
+        .bento-content h3 { font-size: 1.35rem; font-weight: 500; letter-spacing: -0.02em; margin-bottom: 12px; color: #f4f4f5; }
+        .bento-content p { font-size: 0.95rem; line-height: 1.6; color: #a1a1aa; font-weight: 400; flex: 1; }
 
-        .feature-list { list-style: none; padding: 0; margin: 12px 0 0 0; display: flex; flex-direction: column; gap: 12px; }
-        .feature-list li {
-          position: relative; padding-left: 20px; font-size: 0.9rem; color: var(--text-secondary); line-height: 1.5;
-        }
-        .feature-list li::before {
-          content: '•'; position: absolute; left: 0; color: #7dd3fc; font-size: 1.5rem; line-height: 1; top: -2px;
-        }
-
-        .modal-footer {
-          margin-top: 30px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.05);
-          text-align: center; font-size: 0.75rem; color: var(--text-tertiary); font-family: var(--font-mono); flex-shrink: 0;
+        /* Responsive Layout */
+        @media (max-width: 900px) {
+          .bento-grid { grid-template-columns: 1fr; }
+          .card-large, .card-medium, .card-small { grid-column: span 1; padding: 30px; }
+          .apple-hero-title { margin-top: 40px; }
         }
       `}</style>
     </>
