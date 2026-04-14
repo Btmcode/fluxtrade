@@ -69,7 +69,7 @@ async def get_portfolio():
 
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
-    await manager.hospitals_connect(websocket)
+    await manager.connect(websocket)
     try:
         while True:
             # Keep connection alive and handle potential incoming client messages

@@ -16,6 +16,9 @@ import OracleModal from '@/components/OracleModal';
 import WhaleFeed from '@/components/WhaleFeed';
 import SymbolDetailModal from '@/components/SymbolDetailModal';
 import AIRadar from '@/components/AIRadar';
+import { formatUsd, formatNumber, formatPrice } from '@/lib/utils';
+import { useState, useEffect, useRef } from 'react';
+import { useSession, signIn, signOut } from 'next-auth/react';
 import Link from 'next/link';
 import { LogIn, LogOut, User as UserIcon, Save, PieChart } from 'lucide-react';
 
@@ -108,11 +111,11 @@ export default function Dashboard() {
 
   // Handle Dynamic Sorting (Auto-Sort) - Throttled to 5 seconds
   useEffect(() => {
-    if (!rawSymbols.length) return;
+    if (!symbols.length) return;
 
     // Initial load
     if (sortedSymbols.length === 0) {
-      setSortedSymbols(rawSymbols);
+      setSortedSymbols(symbols);
       return;
     }
 
@@ -123,7 +126,7 @@ export default function Dashboard() {
     if (now - lastSortTimeRef.current < 5000) return;
 
     const btc = 'BTCUSDT';
-    const others = rawSymbols.filter(s => s.toUpperCase() !== btc);
+    const others = symbols.filter(s => s.toUpperCase() !== btc);
     
     const sortedOthers = [...others].sort((a, b) => {
       const snapA = snapshots[a.toUpperCase()] || { windowBuyVolume: 0, windowSellVolume: 0 };
@@ -133,9 +136,9 @@ export default function Dashboard() {
       return scoreB - scoreA; // Descending by intensity
     });
 
-    setSortedSymbols([rawSymbols.find(s => s.toUpperCase() === btc), ...sortedOthers]);
+    setSortedSymbols([symbols.find(s => s.toUpperCase() === btc), ...sortedOthers]);
     lastSortTimeRef.current = now;
-  }, [rawSymbols, snapshots, autoSort, sortedSymbols.length]);
+  }, [symbols, snapshots, autoSort, sortedSymbols.length]);
 
   useEffect(() => {
     const timer = setInterval(() => {

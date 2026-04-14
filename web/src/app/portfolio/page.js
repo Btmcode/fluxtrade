@@ -17,12 +17,12 @@ import { formatUsd, formatNumber } from '@/lib/utils';
 
 export default function PortfolioPage() {
   const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(True);
-  const [error, setError] = useState(None);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const fetchPortfolio = async () => {
     try {
-      setLoading(True);
+      setLoading(true);
       const res = await fetch(`${process.env.NEXT_PUBLIC_AGGREGATOR_URL || 'http://localhost:8000'}/api/portfolio`);
       if (!res.ok) throw new Error('API Bağlantı Hatası');
       const json = await res.json();
@@ -30,7 +30,7 @@ export default function PortfolioPage() {
     } catch (err) {
       setError(err.message);
     } finally {
-      setLoading(False);
+      setLoading(false);
     }
   };
 

@@ -1,4 +1,5 @@
 import './globals.css';
+import { AuthProvider } from '@/components/AuthProvider';
 
 export const metadata = {
   title: 'FluxTrade — Canlı Piyasa İstihbarat Terminali',
